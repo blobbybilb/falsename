@@ -39,8 +39,26 @@ func main() {
 		return
 	}
 
+	if flag.Arg(0) == "shell" { // shell
+		if flag.NArg() == 1 {
+			shell := data.GetShell()
+			fmt.Println(shell)
+			return
+		}
+
+		if flag.NArg() == 2 {
+			data.SetShell(flag.Arg(1))
+			return
+		}
+	}
+
 	if flag.Arg(0) == "help" { // help
-		printUsageAndExit()
+		showHelp()
+		return
+	}
+
+	if flag.Arg(0) == "delete" { // delete
+		data.DeleteCommand(flag.Arg(1))
 		return
 	}
 
@@ -55,10 +73,10 @@ func main() {
 		return
 	}
 
-	printUsageAndExit()
+	showHelp()
 }
 
-func printUsageAndExit() {
+func showHelp() {
 	fmt.Printf(`
 falsename - a simple cross-shell command aliaser
 
@@ -72,11 +90,10 @@ Usage:
 The config directory is %s
 	
 	`, data.DataDirPath)
-	os.Exit(0)
 }
 
 func runCommand(cmdStr string) {
-	cmd := exec.Command("/bin/sh", "-c", cmdStr)
+	cmd := exec.Command(data.GetShell(), "-c", cmdStr)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
