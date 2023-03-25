@@ -81,7 +81,7 @@ func showHelp() {
 falsename - a simple cross-shell command aliaser
 
 Usage:
-  fn   -> choose an alias
+  fn   -> choose an alias from a list of all aliases
   fn <alias>   -> run an alias
   fn list   -> list all aliases
   fn get <alias>   -> get the command for an alias
