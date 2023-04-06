@@ -7,8 +7,9 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const (
-	DataDirPath = "~/.config/.falsename/"
+var (
+	// DataDirPath = os.Getenv("HOME") + "/.config/.falsename/"
+	DataDirPath = "tmpdata"
 )
 
 func init() {

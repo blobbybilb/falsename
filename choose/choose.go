@@ -31,6 +31,10 @@ func ChooseAlias(options []types.Command) int {
 
 	selected := 0
 
+	if len(options) == 0 {
+		return -2
+	}
+
 	DisplayAliasesMenu(options, selected)
 
 	for {
@@ -52,6 +56,10 @@ func ChooseAlias(options []types.Command) int {
 		case termbox.KeyEsc:
 			termbox.Close()
 			return -1
+		case termbox.KeyCtrlC:
+			termbox.Close()
+			return -1
 		}
+
 	}
 }

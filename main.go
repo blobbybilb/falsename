@@ -10,16 +10,25 @@ import (
 )
 
 func main() {
+	var helpFlag bool
 
-	var saveCommandFlag bool
-
-	flag.BoolVar(&saveCommandFlag, "s", false, "Save the command")
+	// flag.BoolVar(&saveCommandFlag, "s", false, "Save the command")
+	flag.BoolVar(&helpFlag, "h", false, "Show help")
 	flag.Parse()
+
+	if helpFlag {
+		fmt.Println("falsename - a simple cross-shell command aliaser. For help: fn help")
+		return
+	}
 
 	if flag.NArg() == 0 { // choose
 		commands := data.GetAllCommands()
 		selectedAlias := choose.ChooseAlias(commands)
 		if selectedAlias == -1 {
+			return
+		}
+		if selectedAlias == -2 {
+			fmt.Println("No aliases found. Use -s to save a command.")
 			return
 		}
 		runCommand(commands[selectedAlias].Command)
@@ -62,14 +71,23 @@ func main() {
 		return
 	}
 
-	if flag.NArg() == 1 { // run
-		cmd := data.GetCommand(flag.Arg(0))
-		runCommand(cmd)
+	if flag.Arg(0) == "save" {
+		if flag.NArg() != 3 {
+			fmt.Println("Usage: fn -s <alias> <command>")
+			return
+		}
+
+		data.SaveCommand(flag.Arg(1), flag.Arg(2))
 		return
 	}
 
-	if saveCommandFlag { // save
-		data.SaveCommand(flag.Arg(0), flag.Arg(1))
+	if flag.NArg() == 1 { // run
+		cmd := data.GetCommand(flag.Arg(0))
+		runCommand(cmd)
+		if cmd == "--not found--" {
+			fmt.Println("Alias not found. Use -s to save a command.")
+			return
+		}
 		return
 	}
 
@@ -77,19 +95,22 @@ func main() {
 }
 
 func showHelp() {
-	fmt.Printf(`
+	configText := fmt.Sprintf(`
 falsename - a simple cross-shell command aliaser
 
 Usage:
-  fn   -> choose an alias from a list of all aliases
-  fn <alias>   -> run an alias
-  fn list   -> list all aliases
-  fn get <alias>   -> get the command for an alias
-  fn -s <alias> <command>   -> save an alias
+	fn   -> choose an alias
+	fn <alias>   -> run an alias
+	fn list   -> list all aliases
+	fn get <alias>   -> get the command for an alias
+	fn save <alias> <command>   -> save an alias
+	fn shell <shell> -> set shell
+	fn shell -> get configured shell
+	fn delete <alias>   -> delete an alias
 
 The config directory is %s
-	
-	`, data.DataDirPath)
+`, data.DataDirPath)
+	fmt.Println(configText)
 }
 
 func runCommand(cmdStr string) {
