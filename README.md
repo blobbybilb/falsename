@@ -12,8 +12,10 @@ A CLI utility to make cross-shell command aliases, and access them from a simple
 - `fn <alias>` -> run an alias
 - `fn list` -> list all aliases
 - `fn get <alias>` -> get the command for an alias
-- `fn -s <alias> <command>` -> save an alias
+- `fn save <alias> <command>` -> save an alias
 - `fn shell` -> get configured shell
 - `fn shell <shell>` -> set shell
+- `fn delete <alias>`   -> delete an alias
+
 
 ###### License: GNU GPLv3
