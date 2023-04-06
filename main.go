@@ -28,7 +28,7 @@ func main() {
 			return
 		}
 		if selectedAlias == -2 {
-			fmt.Println("No aliases found. Use -s to save a command.")
+			fmt.Println("No aliases found. Use fn save to save a command.")
 			return
 		}
 		runCommand(commands[selectedAlias].Command)
@@ -73,7 +73,7 @@ func main() {
 
 	if flag.Arg(0) == "save" {
 		if flag.NArg() != 3 {
-			fmt.Println("Usage: fn -s <alias> <command>")
+			fmt.Println("Usage: fn save <alias> <command>")
 			return
 		}
 
@@ -85,7 +85,7 @@ func main() {
 		cmd := data.GetCommand(flag.Arg(0))
 		runCommand(cmd)
 		if cmd == "--not found--" {
-			fmt.Println("Alias not found. Use -s to save a command.")
+			fmt.Println("Alias not found. Use fn save to save a command.")
 			return
 		}
 		return
@@ -114,6 +114,9 @@ The config directory is %s
 }
 
 func runCommand(cmdStr string) {
+	if cmdStr == "--not found--" {
+		return
+	}
 	cmd := exec.Command(data.GetShell(), "-c", cmdStr)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

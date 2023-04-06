@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	// DataDirPath = os.Getenv("HOME") + "/.config/.falsename/"
-	DataDirPath = "tmpdata"
+	DataDirPath = os.Getenv("HOME") + "/.config/.falsename/"
+	// DataDirPath = "tmpdata/"
 )
 
 func init() {
