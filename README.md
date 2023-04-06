@@ -6,6 +6,10 @@ A CLI utility to make cross-shell command aliases, and access them from a simple
 
 (coming soon: why?db support to sync aliases across multiple devices)
 
+## Download
+Pre-built binaries for Windows, macOS, Linux, and FreeBSD are available in the build folder in the repository.
+
+
 ## Usage:
 
 - `fn` -> choose an alias from a list of all aliases
@@ -16,6 +20,5 @@ A CLI utility to make cross-shell command aliases, and access them from a simple
 - `fn shell` -> get configured shell
 - `fn shell <shell>` -> set shell
 - `fn delete <alias>`   -> delete an alias
-
 
 ###### License: GNU GPLv3
