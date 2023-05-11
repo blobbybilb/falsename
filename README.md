@@ -4,11 +4,11 @@
 
 A CLI utility to make cross-shell command aliases, and access them from a simple TUI.
 
-(coming soon: why?db support to sync aliases across multiple devices)
+(coming in v2: why?db support to sync aliases across multiple devices)
 
 ## Download
-Pre-built binaries for Windows, macOS, Linux, and FreeBSD are available in the build folder in the repository.
 
+Pre-built binaries for Windows, macOS, Linux, and FreeBSD are available in the build folder in the repository.
 
 ## Usage:
 
@@ -19,6 +19,6 @@ Pre-built binaries for Windows, macOS, Linux, and FreeBSD are available in the b
 - `fn save <alias> <command>` -> save an alias
 - `fn shell` -> get configured shell
 - `fn shell <shell>` -> set shell
-- `fn delete <alias>`   -> delete an alias
+- `fn delete <alias>` -> delete an alias
 
 ###### License: GNU GPLv3
