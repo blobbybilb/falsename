@@ -1,12 +1,10 @@
-package choose
+package main
 
 import (
-	"falsename/types"
-
 	"github.com/nsf/termbox-go"
 )
 
-func DisplayAliasesMenu(options []types.Command, selected int) {
+func DisplayAliasesMenu(options []Command, selected int) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	for i, option := range options {
 		offsetX := 2
@@ -25,7 +23,7 @@ func DisplayAliasesMenu(options []types.Command, selected int) {
 	termbox.Flush()
 }
 
-func ChooseAlias(options []types.Command) int {
+func ChooseAlias(options []Command) int {
 	termbox.Init()
 	defer termbox.Close()
 

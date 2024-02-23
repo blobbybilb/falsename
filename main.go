@@ -1,8 +1,6 @@
 package main
 
 import (
-	"falsename/choose"
-	"falsename/data"
 	"flag"
 	"fmt"
 	"os"
@@ -22,20 +20,20 @@ func main() {
 	}
 
 	if flag.NArg() == 0 { // choose
-		commands := data.GetAllCommands()
-		selectedAlias := choose.ChooseAlias(commands)
+		commands := GetAllCommands()
+		selectedAlias := ChooseAlias(commands)
 		if selectedAlias == -1 {
 			return
 		}
 		if selectedAlias == -2 {
-			fmt.Println("No aliases found. Use fn save to save a command.")
+			fmt.Println("No aliases found. Use 'fn save' to save a command.")
 			return
 		}
 		runCommand(commands[selectedAlias].Command)
 		return
 	}
 	if flag.Arg(0) == "list" { // list
-		commands := data.GetAllCommands()
+		commands := GetAllCommands()
 		for _, cmd := range commands {
 			fmt.Printf("%s: %s\n", cmd.Name, cmd.Command)
 		}
@@ -43,20 +41,20 @@ func main() {
 	}
 
 	if flag.Arg(0) == "get" { // get
-		cmd := data.GetCommand(flag.Arg(1))
+		cmd := GetCommand(flag.Arg(1))
 		fmt.Println(cmd)
 		return
 	}
 
 	if flag.Arg(0) == "shell" { // shell
 		if flag.NArg() == 1 {
-			shell := data.GetShell()
+			shell := GetShell()
 			fmt.Println(shell)
 			return
 		}
 
 		if flag.NArg() == 2 {
-			data.SetShell(flag.Arg(1))
+			SetShell(flag.Arg(1))
 			return
 		}
 	}
@@ -67,7 +65,7 @@ func main() {
 	}
 
 	if flag.Arg(0) == "delete" { // delete
-		data.DeleteCommand(flag.Arg(1))
+		DeleteCommand(flag.Arg(1))
 		return
 	}
 
@@ -77,17 +75,38 @@ func main() {
 			return
 		}
 
-		data.SaveCommand(flag.Arg(1), flag.Arg(2))
+		SaveCommand(flag.Arg(1), flag.Arg(2))
 		return
 	}
 
-	if flag.NArg() == 1 { // run
-		cmd := data.GetCommand(flag.Arg(0))
-		runCommand(cmd)
+	if flag.Arg(0) == "config" {
+		if flag.NArg() == 1 {
+			fmt.Println(DataDirPath)
+			return
+		}
+
+		if flag.NArg() == 2 {
+			DataDirPath = flag.Arg(1)
+			SetDataDirPath(DataDirPath)
+			return
+		}
+	}
+
+	if flag.NArg() >= 1 { // run
+		cmd := GetCommand(flag.Arg(0))
 		if cmd == "--not found--" {
 			fmt.Println("Alias not found. Use fn save to save a command.")
 			return
 		}
+
+		remainingArgs := flag.Args()[1:]
+		argStr := ""
+		for _, arg := range remainingArgs {
+			argStr += " " + arg
+		}
+
+		cmd += argStr
+		runCommand(cmd)
 		return
 	}
 
@@ -100,24 +119,27 @@ falsename - a simple cross-shell command aliaser
 
 Usage:
 	fn   -> choose an alias
-	fn <alias>   -> run an alias
+	fn <alias> [args]   -> run an alias with optional arguments
 	fn list   -> list all aliases
 	fn get <alias>   -> get the command for an alias
 	fn save <alias> <command>   -> save an alias
-	fn shell <shell> -> set shell
-	fn shell -> get configured shell
 	fn delete <alias>   -> delete an alias
+	fn shell   -> get configured shell (default /bin/sh)
+	fn shell <shell>   -> set shell (not recommended unless you don't have /bin/sh)
+	fn config   -> get the config directory
+	fn config <dir>   -> set the config directory
 
 The config directory is %s
-`, data.DataDirPath)
+`, DataDirPath)
 	fmt.Println(configText)
 }
 
 func runCommand(cmdStr string) {
 	if cmdStr == "--not found--" {
+		fmt.Println("Alias not found. Use fn save to save a command.")
 		return
 	}
-	cmd := exec.Command(data.GetShell(), "-c", cmdStr)
+	cmd := exec.Command(GetShell(), "-c", cmdStr)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

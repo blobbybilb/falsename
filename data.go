@@ -1,21 +1,38 @@
-package data
+package main
 
 import (
-	"falsename/types"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
 
 var (
-	DataDirPath = os.Getenv("HOME") + "/.config/.falsename/"
-	// DataDirPath = "tmpdata/"
+	// configDirPath = "tmpdata/"
+	configDirPath = os.Getenv("HOME") + "/.config/falsename/"
+	DataDirPath   = configDirPath
 )
 
 func init() {
-	if _, err := os.Stat(DataDirPath); os.IsNotExist(err) {
-		os.MkdirAll(DataDirPath, 0755)
+	if _, err := os.Stat(configDirPath); os.IsNotExist(err) {
+		os.MkdirAll(configDirPath, 0755)
 	}
+
+	dataDirPathFile := configDirPath + "data_dir_path.txt"
+	if _, err := os.Stat(dataDirPathFile); err == nil {
+		data, err := os.ReadFile(dataDirPathFile)
+		if err == nil {
+			DataDirPath = strings.TrimSpace(string(data))
+			if !strings.HasSuffix(DataDirPath, "/") {
+				DataDirPath += "/"
+			}
+		}
+	}
+}
+
+func SetDataDirPath(path string) {
+	DataDirPath = path
+	os.WriteFile(configDirPath+"data_dir_path.txt", []byte(DataDirPath), 0644)
 }
 
 func SaveCommand(name, command string) {
@@ -32,7 +49,11 @@ func SaveCommand(name, command string) {
 	}
 
 	if !foundExisting {
-		commands = append(commands, types.Command{Name: name, Command: command})
+		commands = append(commands, Command{Name: name, Command: command})
+	}
+
+	if _, err := os.Stat(DataDirPath); os.IsNotExist(err) {
+		os.MkdirAll(DataDirPath, 0755)
 	}
 
 	f, _ := os.Create(DataDirPath + "aliases.yml")
@@ -52,11 +73,11 @@ func GetCommand(name string) string {
 	return "--not found--"
 }
 
-func GetAllCommands() []types.Command {
+func GetAllCommands() []Command {
 	f, _ := os.Open(DataDirPath + "aliases.yml")
 	defer f.Close()
 
-	var commands []types.Command
+	var commands []Command
 	dec := yaml.NewDecoder(f)
 	dec.Decode(&commands)
 
